@@ -1,4 +1,3 @@
-// const { CustomAPIError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 const errorHandler = (error, req, res, next) => {
@@ -6,10 +5,6 @@ const errorHandler = (error, req, res, next) => {
     statusCode: error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: error.message || "Something went wrong. Try again later.",
   };
-
-  // if (error instanceof CustomAPIError) {
-  //   return res.status(error.statusCode).json({ msg: error.message });
-  // }
 
   if (error.code && error.code === 11000) {
     customError.statusCode = StatusCodes.BAD_REQUEST;
@@ -30,8 +25,9 @@ const errorHandler = (error, req, res, next) => {
     customError.msg = `No job with Id ${error.value}`;
   }
 
-  // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
-  return res.status(customError.statusCode).json({ msg: customError.msg });
+  return res
+    .status(customError.statusCode)
+    .json({ status: "error", msg: customError.msg });
 };
 
 module.exports = errorHandler;
